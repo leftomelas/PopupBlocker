@@ -1,5 +1,13 @@
 # Popup Blocker by AdGuard
 
+> [!WARNING]
+> This repository is **deprecated** and will be archived.
+> Please use the GitHub version instead:
+> [AdGuardSoftwareLimited/ext-popup-blocker](https://github.com/AdGuardSoftwareLimited/ext-popup-blocker)
+> Update your git remote:
+> `git remote set-url origin git@github.com:AdGuardSoftwareLimited/ext-popup-blocker.git`
+>
+
 Popup Blocker is a userscript that blocks unwanted pop-up and pop-under windows in any browser
 that supports a userscript manager.
 
