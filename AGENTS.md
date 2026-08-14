@@ -33,6 +33,7 @@ that lets users manage allowlisted and silenced domains.
 ## Technical Context
 
 - **Language**: TypeScript (ES2015 target), compiled with Rollup
+- **Package Manager**: pnpm 10.x (>=10.33.4 <11), Node.js >= 22
 - **Primary Dependencies**: Preact (UI), `@adguard/translate`
   (i18n), tslib
 - **Storage**: Greasemonkey userscript API (`GM_getValue` /
@@ -97,43 +98,25 @@ that lets users manage allowlisted and silenced domains.
     └── mocks/                  # GM API and other mocks
 ```
 
-> **Repository note**: This repo is private at
-> `AdGuardSoftwareLimited/ext-popup-blocker`. A public mirror is automatically
-> synced to `AdguardTeam/PopupBlocker` on every push to `master` via the
-> `mirror.yml` workflow.
-
 ## Build And Test Commands
 
-| Command                  | Purpose                              |
-| ------------------------ | ------------------------------------ |
-| `yarn install`           | Install dependencies                 |
-| `yarn lint`              | Run ESLint on the codebase           |
-| `yarn lint:md`           | Run Markdownlint on Markdown files   |
-| `yarn userscript-dev`    | Build userscript (dev, with logging) |
-| `yarn userscript-beta`   | Build userscript (beta)              |
-| `yarn userscript-release`| Build userscript (release, minified) |
-| `yarn bundle:dev`        | Build all targets (dev)              |
-| `yarn bundle:beta`       | Build all targets (beta)             |
-| `yarn bundle:release`    | Build all targets (release)          |
-| `yarn options-page`      | Build the options page               |
-| `yarn tests`             | Build the browser test runner        |
-
-Tests are built into an HTML file and run in a browser — there is no
-CLI test runner. After running `yarn tests`, open the generated
-`build/tests.html` in a browser to execute the Mocha suite.
+The full list of build, test, and lint commands lives in
+[DEVELOPMENT.md](./DEVELOPMENT.md#available-scripts). The commands that MUST
+be run before finishing a task are listed in the [Contribution
+Instructions](#contribution-instructions) below.
 
 ## Contribution Instructions
 
 - You MUST verify your changes with the linter and type checker.
 
     Use the following commands:
-    - `yarn lint` to run ESLint
-    - `yarn lint:md` to run Markdownlint on Markdown files
-    - `yarn userscript-dev` to check for TypeScript compilation errors
+    - `pnpm lint` to run ESLint
+    - `pnpm lint:md` to run Markdownlint on Markdown files
+    - `pnpm userscript-dev` to check for TypeScript compilation errors
 
 - You MUST update the unit tests for changed code.
 
-- You MUST build the tests with `yarn tests` and verify manually in a
+- You MUST build the tests with `pnpm tests` and verify manually in a
   browser that your changes do not break existing functionality.
 
 - When making changes to the project structure, ensure the Project
@@ -146,6 +129,14 @@ CLI test runner. After running `yarn tests`, open the generated
 
 - After completing the task you MUST verify that the code you've
   written follows the Code Guidelines in this file.
+
+- Commit messages MUST start with the ticket number (`AG-XXX`) so they
+  auto-link with the task tracker, followed by a short description in
+  the present tense (e.g. `AG-1234 Fix login redirect`). Automated
+  commits made by CI (e.g. the CHANGELOG finalization in the release
+  PRs) use a [Conventional Commits] prefix such as `docs:` instead.
+
+[Conventional Commits]: https://www.conventionalcommits.org/en/v1.0.0/
 
 ## Code Guidelines
 
@@ -252,14 +243,9 @@ Storage and Shared but not on DOM wrappers or Proxy.
 
 ### Testing
 
-- **Framework**: Mocha + Chai, running in a browser environment
-- **Test location**: `test/` directory mirrors `src/` structure
-  (e.g., `test/events/verify.ts` tests `src/events/verify.ts`)
-- **Test entry point**: `test/index.ts` imports all test modules
-- **Mocks**: Located in `test/mocks/` (e.g., `gm-api.ts` mocks
-  the Greasemonkey API)
-- **Running tests**: Build with `yarn tests`, then open
-  `build/tests.html` in a browser
+- **How to run**: Tests use Mocha + Chai in a browser; see
+  [DEVELOPMENT.md](./DEVELOPMENT.md#running-tests) for the build and
+  execution steps.
 - **Coverage**: No automated coverage gate; strive to test all
   heuristic logic (event verification, timeline checks) and
   storage migration paths
@@ -270,8 +256,11 @@ Storage and Shared but not on DOM wrappers or Proxy.
 
 ### Dependency Management
 
-- **Pin all dependency versions explicitly** — do not use version
-  ranges that allow automatic upgrades to untested versions.
+- **Pin all dependency versions explicitly** — use exact versions
+  (no `^` or `~` ranges) so untested upgrades cannot slip in. When
+  pinning, never downgrade: the exact version in `package.json` must
+  be at least the version resolved in `pnpm-lock.yaml`, and the
+  lockfile must be kept in sync with `pnpm install`.
 - **Prefer vanilla solutions** — use the language's standard
   library and built-in APIs when they adequately solve the problem.
   Only add a dependency when it provides significant value over a
@@ -296,31 +285,24 @@ Storage and Shared but not on DOM wrappers or Proxy.
 vulnerabilities, supply chain risks, and long-term maintenance
 costs.
 
-<!-- FIXME: pin dependencies and remove this part -->
-**Known exclusions** (existing range versions to be pinned):
-
-- All `devDependencies` and `dependencies` in `package.json`
-  currently use caret (`^`) ranges instead of exact pinning.
-
 ### Configuration & Documentation
 
 - **Runtime configuration**: The userscript has no config files;
   user settings (allowed/silenced domains) are stored via the
   Greasemonkey storage API (`GM_getValue` / `GM_setValue`).
-- **Build-time configuration**: The build channel (`dev`, `beta`,
-  `release`) is set via the `NODE_ENV` environment variable.
-  Debug flags (`DEBUG`, `RECORD`, `NO_PROXY`) are injected at
-  build time via Rollup's `replace` plugin.
-- **Exclusions**: AdGuard exclusion domains are maintained in
-  `/exclusions.ts`; TinyShield exclusions are auto-updated via
-  `yarn update-tinyshield-websites` into
-  `tasks/tinyShieldWebsites.json`.
-- **Locales**: Translation strings live in `src/locales/`. Use
-  `yarn locales:download` and `yarn locales:upload` to sync with
-  the Crowdin translation platform.
+- **Build-time configuration**: The build channel and debug flags
+  are described in [DEVELOPMENT.md](./DEVELOPMENT.md#build-time-environment).
+- **Exclusions**: See [Managing
+  Exclusions](./DEVELOPMENT.md#managing-exclusions) in `DEVELOPMENT.md`.
+- **Locales**: See [Working with
+  Locales](./DEVELOPMENT.md#working-with-locales) in `DEVELOPMENT.md`.
 - **Documentation updates**: Changes to build commands, project
-  structure, or public API must be reflected in both `README.md`
-  and this `AGENTS.md` file.
+  structure, or public API must be reflected in `README.md`,
+  `DEVELOPMENT.md`, and this `AGENTS.md` file as appropriate.
+- **Single source of truth**: Do not duplicate content across docs —
+  `README.md` owns the user-facing overview, `DEVELOPMENT.md` owns the
+  developer workflow, and this file owns the rules and guidelines.
+  Reference the owning doc instead of repeating it.
 - **No hardcoded secrets**: The project has no secrets or API keys.
 
 <!-- FIXME: do not duplicate markdownlint configuration in text -->
@@ -371,5 +353,4 @@ both humans and AI agents that consume project documentation.
 
 - Preserve Keep a Changelog style in `CHANGELOG.md` and reference related
   issue numbers when known.
-- Release versions are driven by `CHANGELOG.md` via `tag-from-changelog.yml`;
-  the version is injected into `package.json` at build time.
+- Do not update `CHANGELOG.md` for changes that only affect CI or tests.
