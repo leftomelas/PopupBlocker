@@ -12,7 +12,7 @@ body {
     margin: 0;
     font-size: 1.3rem;
     line-height: 1.428571429;
-    color: var(--gray-base);
+    color: var(--text-main);
     @mixin weight-regular;
 
     &.body--overflow {
@@ -56,13 +56,13 @@ select::-ms-expand {
             width: 18px;
             height: 18px;
             border-radius: 100%;
-            box-shadow: 0 0 0 1px var(--graycc);
+            box-shadow: 0 0 0 1px var(--stroke-control);
             transition: var(--t3) box-shadow;
         }
 
         &:hover {
             &:after {
-                box-shadow: 0 0 0 1px var(--green74);
+                box-shadow: 0 0 0 1px var(--product-primary);
             }
         }
     }
@@ -76,90 +76,20 @@ select::-ms-expand {
             width: 10px;
             height: 10px;
             border-radius: 100%;
-            background-color: var(--green74);
+            background-color: var(--product-primary);
         }
     }
 
     &:disabled {
         & + .radio-label {
             &:after {
-                background-color: var(--grayf1);
+                background-color: var(--bg-inset);
                 cursor: default;
             }
 
             &:hover {
                 &:after {
-                    box-shadow: 0 0 0 1px var(--graycc);
-                }
-            }
-        }
-    }
-}
-
-.checkbox {
-    display: none;
-
-    &-label {
-        padding-left: 30px;
-        position: relative;
-
-        &:after {
-            content: '';
-            cursor: pointer;
-            position: absolute;
-            left: 0;
-            top: -1px;
-            width: 19px;
-            height: 19px;
-            border-radius: 3px;
-            box-shadow: 0 0 0 1px var(--graycc);
-            transition: var(--t3) box-shadow, var(--t3) background-color;
-        }
-
-        &:hover {
-            &:after {
-                box-shadow: 0 0 0 1px var(--green74);
-            }
-        }
-    }
-
-    &:checked {
-        & + .checkbox-label {
-            &:after {
-                background-color: var(--green74);
-                box-shadow: 0 0 0 1px var(--green74);
-            }
-
-            &:before {
-                content: '';
-                cursor: pointer;
-                position: absolute;
-                z-index: 1;
-                top: 5px;
-                left: 4px;
-                width: 11px;
-                height: 9px;
-                background-image: svg-load("../../../../assets/icons/checked.svg");
-            }
-
-            &:hover {
-                &:after {
-                    background-color: var(--green5B);
-                }
-            }
-        }
-    }
-
-    &:disabled {
-        & + .checkbox-label {
-            &:after {
-                background-color: var(--grayf1);
-                cursor: default;
-            }
-
-            &:hover {
-                &:after {
-                    box-shadow: 0 0 0 1px var(--graycc);
+                    box-shadow: 0 0 0 1px var(--stroke-control);
                 }
             }
         }
@@ -167,7 +97,7 @@ select::-ms-expand {
 }
 
 .userscript-options-page {
-    background-color: #e6e6e6;
+    background-color: var(--bg-page);
 
     & .settings {
         justify-content: center;

@@ -1,0 +1,47 @@
+/**
+ * Icon registry — the single place where icons are chosen.
+ *
+ * To swap an icon, drop the new file into `src/assets/icons/` and change the one line here.
+ *
+ * This file is imported by `alerts.pcss` too, which is baked into the userscript as a string
+ * and injected on every blocked popup, so it holds only the icons the notification paints.
+ * Icons that only the options page uses live in `icons-options.pcss`.
+ *
+ * Monochrome icons are applied with `@mixin icon-mask` (see below), which paints them with
+ * `--icon-color` instead of using the color baked into the SVG. That means they follow the
+ * theme automatically and need no dark-mode duplicates.
+ *
+ * A mask is driven by alpha, so an `opacity` attribute in the source SVG no longer dims
+ * the icon's own ink — it dims how much of `--icon-color` shows through, and the token can
+ * no longer fully control the icon's strength. `arrow` (0.34), `cross` (0.66) and `del`
+ * (0.60) carry one from their `background-image` days, which is why they render lighter
+ * than `tooltip`, which has none. Keep that in mind when adding an icon.
+ *
+ * The brand icon (the green window) keeps its own colors and reads correctly on both
+ * backgrounds, so it is used as a plain `background-image`.
+ */
+:root {
+    /* Monochrome — painted with var(--icon-color) through @mixin icon-mask */
+    --icon-close: svg-load("../../../../assets/icons/cross.svg");
+    --icon-arrow: svg-load("../../../../assets/icons/arrow.svg");
+
+    /* Brand — full color, used as-is */
+    --icon-window: svg-load("../../../../assets/icons/window.svg");
+}
+
+/**
+ * Paints a monochrome icon with the current theme's icon color.
+ *
+ * @param $icon one of the `--icon-*` tokens above, e.g. `@mixin icon-mask var(--icon-close);`
+ */
+@define-mixin icon-mask $icon {
+    -webkit-mask-image: $icon;
+    mask-image: $icon;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    background-color: var(--icon-color);
+}

@@ -4,6 +4,8 @@ import { AlertView, AlertViewInterface } from './AlertView';
 import { AlertControllerInterface } from './AlertControllerInterface';
 import { translator } from '../../i18n';
 import { OptionName } from '../../storage/Option';
+import { themeOption } from '../../storage/ThemeOption';
+import { Theme } from '../../theme';
 import {
     isUndef,
     isNumber,
@@ -76,7 +78,10 @@ export class AlertController implements AlertControllerInterface {
     }
 
     /**
-     * Not providing @param callback means that a currently scheduled transition will be canceled.
+     * Not providing a callback means that a currently scheduled transition will be canceled.
+     *
+     * @param callback transition to run once the timeout elapses
+     * @param timeout delay in milliseconds
      */
     private scheduleTransition(callback?:()=>void, timeout?:number) {
         clearTimeout(this.stateTransitionTimer);
@@ -120,6 +125,9 @@ export class AlertController implements AlertControllerInterface {
 
     /**
      * Public methods
+     *
+     * @param origDomain domain of the page that tried to open the popup
+     * @param destUrl url of the blocked popup
      */
     createAlert(origDomain:string, destUrl:string) {
         const { domainToPopupCount } = this;
@@ -130,7 +138,7 @@ export class AlertController implements AlertControllerInterface {
 
         // Initialize view when necessary
         if (!this.alertView) {
-            this.alertView = new AlertView(this);
+            this.alertView = new AlertView(this, AlertController.readTheme());
         }
 
         const alertData = { origDomain, destUrl };
@@ -238,10 +246,23 @@ export class AlertController implements AlertControllerInterface {
         this.$destroy();
     }
 
+    /**
+     * Reads the stored theme for a view that is about to be rendered.
+     *
+     * The views do not touch storage themselves; this is read here, at render time rather
+     * than once at start-up, so that a choice made on the options page since the page
+     * loaded is picked up by the next notification.
+     *
+     * @returns the stored theme, or null to follow the OS
+     */
+    private static readTheme(): Theme | null {
+        return themeOption.getStored();
+    }
+
     private notifyAboutSavedSettings() {
         const { toastController } = this;
         if (toastController) {
-            toastController.showNotification(translator.getMessage('settings_saved'));
+            toastController.showNotification(translator.getMessage('settings_saved'), AlertController.readTheme());
         }
         this.onOptionChangeOperationCompletion();
     }

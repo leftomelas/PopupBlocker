@@ -1,0 +1,89 @@
+/**
+ * Semantic color tokens — the single place where colors are chosen.
+ *
+ * To re-color the UI, change the mapping here (or the base scale in `palette.pcss`).
+ * Nothing else in the codebase should contain a literal color.
+ *
+ * Light values live on a bare `:root`. Dark values are declared TWICE, on purpose:
+ *
+ *   1. inside `@media (prefers-color-scheme: dark)`, guarded by `:not([data-theme="light"])`
+ *      — this is the default for a user who never touched the theme switch;
+ *   2. under `:root[data-theme="dark"]` — this is the explicit user choice, and it has to
+ *      win even when the OS is set to light.
+ *
+ * Both blocks are required: dropping (1) breaks "follow the system", dropping (2) breaks
+ * "switch to dark while the OS is light". The values themselves are kept in one place via
+ * the `theme-dark` mixin below, so there is still only one copy to edit.
+ */
+
+@define-mixin theme-dark {
+    --bg-page: var(--gray-90);
+    --bg-card: var(--gray-80);
+    --bg-card-hover: var(--green-subtle);
+    --bg-button-secondary: var(--gray-80);
+    --bg-inset: var(--gray-70);
+    --bg-tooltip: var(--gray-70);
+    --bg-pin: var(--gray-90);
+    --bg-pin-hover: var(--green-subtle-on-gray-90);
+    --bg-toast: var(--gray-100);
+
+    --text-main: var(--gray-20);
+    --text-input: var(--gray-20);
+    --text-disabled: var(--gray-50);
+    --text-on-primary: var(--gray-0);
+
+    --stroke-divider: var(--gray-70);
+    --stroke-input: var(--gray-70);
+    --stroke-control: var(--gray-70);
+
+    --icon-color: var(--gray-40);
+    --icon-del-color: var(--gray-40);
+    --icon-arrow-color: var(--gray-40);
+
+    --product-primary: var(--product-primary-50);
+    --product-primary-hover: var(--product-primary-60);
+
+    --shadow-card: var(--dark-card-shadow);
+    --shadow-modal: var(--dark-modal-shadow);
+}
+
+:root {
+    --bg-page: var(--light-page);
+    --bg-card: var(--gray-0);
+    --bg-card-hover: var(--green-subtle);
+    --bg-button-secondary: var(--gray-0);
+    --bg-inset: var(--light-control-disabled);
+    --bg-tooltip: var(--gray-0);
+    --bg-pin: var(--gray-0);
+    --bg-pin-hover: var(--green-subtle-on-white);
+    --bg-toast: var(--light-toast);
+
+    --text-main: var(--light-text);
+    --text-input: var(--light-input-text);
+    --text-disabled: var(--light-border);
+    --text-on-primary: var(--gray-0);
+
+    --stroke-divider: var(--light-border);
+    --stroke-input: var(--light-border);
+    --stroke-control: var(--light-control-border);
+
+    --icon-color: var(--light-icon-color);
+    --icon-del-color: var(--light-icon-del-color);
+    --icon-arrow-color: var(--light-icon-arrow-color);
+
+    --product-primary: var(--light-green);
+    --product-primary-hover: var(--light-green-hover);
+
+    --shadow-card: var(--light-card-shadow);
+    --shadow-modal: var(--light-modal-shadow);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        @mixin theme-dark;
+    }
+}
+
+:root[data-theme="dark"] {
+    @mixin theme-dark;
+}

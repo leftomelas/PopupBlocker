@@ -4,6 +4,7 @@ import { FrameInjector, IFrameInjector } from '../utils/FrameInjector';
 import { AlertControllerInterface } from './AlertControllerInterface';
 import { functionBind } from '../../shared';
 import { NotificationHead, Alert } from '../../pages/notifications/components';
+import { applyStoredTheme, Theme } from '../../theme';
 
 /**
  * These magic numbers are dictated in the CSS.
@@ -42,7 +43,7 @@ export interface AlertViewInterface {
 
 export class AlertView implements AlertViewInterface {
     /**
-     * Interanl data state of alerts
+     * Internal data state of alerts
      */
     private collapsed:boolean;
 
@@ -79,6 +80,8 @@ export class AlertView implements AlertViewInterface {
 
     constructor(
         private controller:AlertControllerInterface,
+        // Read by the controller, which owns the storage-facing dependencies; the view stays storage-free
+        private theme:Theme | null,
     ) {
         this.renderHead = functionBind.call(this.renderHead, this);
         this.appendIframe();
@@ -188,6 +191,9 @@ export class AlertView implements AlertViewInterface {
         const doc = this.frameDoc = this.frameInjector?.getFrameElement().contentDocument;
         const head = doc?.documentElement.querySelector('head');
         if (head && doc) {
+            // Only an explicit choice is pinned here; with none stored the iframe's own
+            // `prefers-color-scheme` rules decide, so no media query is consulted at all.
+            applyStoredTheme(doc, this.theme);
             render(<NotificationHead />, head);
             // Attach event listeners.
             doc.addEventListener('click', this.onUserInteraction, true);

@@ -1,0 +1,71 @@
+/**
+ * Raw color values — the only place a literal color may appear.
+ *
+ * Use these only in `theme.pcss`, which turns them into semantic tokens such as
+ * `--bg-card` and `--text-main`. Everything else uses those tokens, never a raw color.
+ *
+ * Four groups live here:
+ *
+ *   1. the base scale (`--gray-*`, `--product-primary-*`), mirrored from AdGuard
+ *      Assistant's `src/styles/base/palette.less` so that both products stay on the
+ *      same set of base colors;
+ *   2. the shared hover accent (`--green-subtle` and the opaque variants derived from
+ *      it), used by both themes;
+ *   3. Popup Blocker's legacy light-only colors (`--light-*`), which predate the
+ *      Assistant palette and are kept verbatim so that light mode renders exactly as
+ *      it did before the dark theme was added;
+ *   4. the dark theme's shadows (`--dark-*-shadow`). Everything else dark mode needs
+ *      comes from the base scale.
+ */
+:root {
+    /* 1. Base scale */
+    --gray-0: #ffffff;
+    --gray-10: #f6f6f6;
+    --gray-20: #e4e4e4;
+    --gray-30: #d2d2d2;
+    --gray-40: #c0c0c0;
+    --gray-50: #a4a4a4;
+    --gray-60: #7f7f7f;
+    --gray-70: #5b5b5b;
+    --gray-80: #3d3d3d;
+    --gray-90: #1f1f1f;
+    --gray-100: #000000;
+
+    --product-primary-50: #67b279;
+    --product-primary-60: #589968;
+
+    /**
+     * 2. Shared hover accent. Kept verbatim from AdGuard Assistant, where it is
+     * `@assist-green02` in `src/styles/base/variables.less` (Popup Blocker carried the
+     * same value as `--green02`), so that the two products highlight identically.
+     */
+    --green-subtle: rgba(104, 188, 113, 0.2);
+
+    /**
+     * `--green-subtle` flattened onto the two pin backgrounds. The pin floats over the host
+     * page through the transparent notification iframe, so its hover color has to be opaque:
+     * the translucent green would show the page through instead of the pin's own color.
+     */
+    --green-subtle-on-white: #e1f2e3;
+    --green-subtle-on-gray-90: #2e3e2f;
+
+    /* 3. Legacy light-only colors */
+    --light-page: #e6e6e6;
+    --light-text: #282828;
+    --light-border: rgba(197, 197, 197, 0.47);
+    --light-control-border: #cccccc;
+    --light-control-disabled: #f1f1f1;
+    --light-green: #66b574;
+    --light-green-hover: #58a273;
+    --light-toast: rgba(0, 0, 0, 0.7);
+    --light-input-text: #000000;
+    --light-icon-color: #979797;
+    --light-icon-del-color: #868686;
+    --light-icon-arrow-color: #1d1d1d;
+    --light-card-shadow: 0 0 10px 3px rgba(162, 161, 161, 0.3);
+    --light-modal-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+
+    /* 4. Dark-only shadows */
+    --dark-card-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.3);
+    --dark-modal-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+}

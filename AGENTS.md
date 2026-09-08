@@ -80,6 +80,7 @@ that lets users manage allowlisted and silenced domains.
 │   ├── storage/                # Settings DAO and GM API wrapper
 │   ├── pages/                  # Options and notification pages (Preact)
 │   ├── ui/                     # Alert and toast UI components
+│   ├── theme/                  # Light/dark theme resolution and persistence
 │   ├── i18n/                   # Internationalization utilities
 │   ├── shared/                 # Protected APIs, utilities, constants
 │   ├── types/                  # TypeScript type definitions
@@ -92,7 +93,9 @@ that lets users manage allowlisted and silenced domains.
 └── test/                       # Unit tests (Mocha + Chai)
     ├── index.ts                # Test entry point
     ├── events/                 # Event verification tests
+    ├── pages/                  # Options-page hook tests
     ├── storage/                # Storage migration tests
+    ├── theme/                  # Theme helper and mirror tests
     ├── timeline/               # Timeline heuristic tests
     ├── shared/                 # Shared utility tests
     └── mocks/                  # GM API and other mocks
@@ -213,13 +216,13 @@ Proxy Service (src/proxy/) + Timeline Engine (src/timeline/)
     ↓
 Messaging (src/messaging/) + Storage (src/storage/)
     ↓
-Shared Utilities (src/shared/)
+Theme (src/theme/) + Shared Utilities (src/shared/)
 ```
 
 Upper layers may call lower layers. No layer may depend on a layer
 above it. The UI layer (`src/pages/`, `src/ui/`) is a separate
 vertical slice that sits alongside the core stack, depending on
-Storage and Shared but not on DOM wrappers or Proxy.
+Storage, Theme, and Shared but not on DOM wrappers or Proxy.
 
 ### Code Quality
 

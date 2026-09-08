@@ -5,8 +5,10 @@
  *  - the function's arguments, which are used as a global variable throughout
  *    the page script.
  *
+ * @param window global object the page script runs against
  * @param CONTENT_SCRIPT_KEY It is used for communication between a userscript and
  * page script injected by the userscript.
+ * @returns whatever the wrapped page script returns
  */
 declare function popupBlocker(window, CONTENT_SCRIPT_KEY?:string):any;
 /**
@@ -24,7 +26,19 @@ interface Document {
     msElementsFromPoint(x:number, y:number):NodeListOf<Element>
 }
 
+/**
+ * Options api that the userscript exposes on its own options page.
+ *
+ * Composed in `src/init/utils.ts`, so the theme option is grafted on there rather than
+ * living inside `optionsApi` itself. Optional because the options page is also served
+ * to visitors who have not installed the userscript.
+ */
+type ThemeApiProp = typeof import('../shared/constants').THEME_OPTION_PROP;
+type ThemeApi = import('../storage/ThemeOption').ThemeOptionInterface;
+type ExposedOptionsApi = import('../storage/Option').OptionsApi & Record<ThemeApiProp, ThemeApi>;
+
 interface Window {
+    optionsApi?:ExposedOptionsApi
     Window:typeof Window
     Node:typeof Node
     EventTarget:typeof EventTarget
